@@ -8,6 +8,7 @@ def defineG(input_nc, output_nc, ngf, norm='batch', use_dropout=False):
     net = None
     norm_layer = get_norm_layer(norm_type=norm)
     net = UnetGenerator(input_nc, output_nc, 7, ngf, norm_layer=norm_layer, use_dropout=use_dropout)
+    return net
     return init_net(net, 'normal', 0.02)
 
 def defineD():
