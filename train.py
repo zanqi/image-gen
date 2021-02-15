@@ -11,12 +11,17 @@ class Opt(object):
         self.ngf = 64
         self.lr = 0.0002
         self.beta1 = 0.5
+        self.ndf = 64
+        self.direction = 'AtoB'
+        self.gpu_ids = []
+
 
 if __name__ == '__main__':
     opt = Opt(True, 'basic')
+    net = create_model(opt)
     dataloader = create_dataloader()
     for epoch in range(1, 101):
         for i, data in enumerate(dataloader):
-            net = create_model(opt)
-            net(data)
-            break
+            net.set_input(data)
+            net.optimize_parameters()
+            print(f"epoch {epoch}, batch {i}")
