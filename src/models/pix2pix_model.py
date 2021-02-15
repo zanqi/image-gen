@@ -36,6 +36,12 @@ class Pix2PixModel(object):
         self.set_requires_grad(self.netD, True)  # enable backprop for D
         self.optimizer_D.zero_grad()
         self.backward_D()
+        self.optimizer_D.step()
+
+        self.set_requires_grad(self.netD, False)  # D requires no gradients when optimizing G
+        self.optimizer_G.zero_grad()        # set G's gradients to zero
+        self.backward_G()                   # calculate gradients for G
+        self.optimizer_G.step()             # udpate G's weights
 
     def forward(self):
         self.fake_to = self.netG(self.real_from)  # G(A)
@@ -47,3 +53,16 @@ class Pix2PixModel(object):
     def backward_D(self):
         fake_AB = torch.cat((self.real_from, self.fake_to), 1)
         pred_fake = self.netD(fake_AB.detach())
+        self.loss_D_fake = self.criterionGAN(pred_fake, False)
+
+        real_AB = torch.cat((self.real_from, self.real_to), 1)
+        pred_real = self.netD(real_AB)
+        self.loss_D_real = self.criterionGAN(pred_real, True)
+
+        self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
+        self.loss_D.backward()
+    
+    def backward_G(self):
+        fake_AB = torch.cat((self.real_from, self.fake_to), 1)
+        pred_fake = self.netD(fake_AB)
+        self.loss_G_GAN = self.criterionGAN(pred_fake, True)
