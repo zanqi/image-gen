@@ -1,5 +1,6 @@
 from src.models import create_model
 from src.data import create_dataloader
+from src.util.visualizer import Visualizer
 
 
 class Opt(object):
@@ -14,14 +15,17 @@ class Opt(object):
         self.ndf = 64
         self.direction = 'AtoB'
         self.gpu_ids = []
+        self.checkpoints_dir = './checkpoints'
 
 
 if __name__ == '__main__':
     opt = Opt(True, 'basic')
     net = create_model(opt)
+    viz = Visualizer(opt)
     dataloader = create_dataloader()
     for epoch in range(1, 101):
         for i, data in enumerate(dataloader):
             net.set_input(data)
             net.optimize_parameters()
             print(f"epoch {epoch}, batch {i}")
+            viz.display_current_results(net.get_current_visuals(), epoch, True)

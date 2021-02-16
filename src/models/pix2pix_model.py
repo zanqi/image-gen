@@ -1,3 +1,4 @@
+from typing import OrderedDict
 import torch
 from . import networks
 from .networks.GANLoss import GANLoss
@@ -17,6 +18,7 @@ class Pix2PixModel(object):
         self.gpu_ids = opt.gpu_ids
         self.device = torch.device('cuda:{}'.format(
             self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')
+        self.visual_names = ['real_from', 'fake_to', 'real_to']
 
         if self.isTrain:
             self.netD = networks.defineD(
@@ -74,3 +76,9 @@ class Pix2PixModel(object):
         self.loss_G_L1 = self.criterionL1(self.fake_to, self.real_to) * 100
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
         self.loss_G.backward()
+
+    def get_current_visuals(self):
+        visuals = OrderedDict()
+        for name in self.visual_names:
+            visuals[name] = getattr(self, name)
+        return visuals
