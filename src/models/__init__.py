@@ -1,5 +1,5 @@
-
 from .pix2pix_model import Pix2PixModel
+
 
 def create_model(opt):
     """

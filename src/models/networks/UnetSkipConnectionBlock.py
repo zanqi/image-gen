@@ -8,7 +8,8 @@ class UnetSkipConnectionBlock(nn.Module):
     """
 
     def __init__(self,
-                 outer_nc, inner_nc, input_nc, submodule, is_outermost=False, is_innermost=False,
+                 outer_nc, inner_nc, input_nc, submodule, is_outermost=False,
+                 is_innermost=False,
                  norm_layer=nn.BatchNorm2d, use_dropout=False):
         super(UnetSkipConnectionBlock, self).__init__()
         self.is_outermost = is_outermost

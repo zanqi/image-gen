@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 
+
 class GANLoss(nn.Module):
     """
     Loss function for GAN, log(D(y)) and log(1- D(G(x))) in one class

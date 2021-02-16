@@ -1,10 +1,12 @@
 import torch
 from . import networks
+from .networks.GANLoss import GANLoss
 
 
 class Pix2PixModel(object):
     """
-    Pix2Pix model translate picture to picture. Trained using paired input: "This picture should map to this other picture".
+    Pix2Pix model translate picture to picture. Trained using paired input:
+    "This picture should map to this other picture".
     """
 
     def __init__(self, opt):
@@ -17,10 +19,11 @@ class Pix2PixModel(object):
             self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')
 
         if self.isTrain:
-            self.netD = networks.defineD(opt.input_nc + opt.output_nc, opt.ndf, 'basic')
+            self.netD = networks.defineD(
+                opt.input_nc + opt.output_nc, opt.ndf, 'basic')
 
-            self.criterionGAN = networks.GANLoss(opt.gan_mode)
-            self.critenrionL1 = torch.nn.L1Loss()
+            self.criterionGAN = GANLoss(opt.gan_mode)
+            self.criterionL1 = torch.nn.L1Loss()
             self.optimizer_G = torch.optim.Adam(
                 self.netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizer_D = torch.optim.Adam(
@@ -38,7 +41,8 @@ class Pix2PixModel(object):
         self.backward_D()
         self.optimizer_D.step()
 
-        self.set_requires_grad(self.netD, False)  # D requires no gradients when optimizing G
+        # D requires no gradients when optimizing G
+        self.set_requires_grad(self.netD, False)
         self.optimizer_G.zero_grad()        # set G's gradients to zero
         self.backward_G()                   # calculate gradients for G
         self.optimizer_G.step()             # udpate G's weights
@@ -61,8 +65,12 @@ class Pix2PixModel(object):
 
         self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
         self.loss_D.backward()
-    
+
     def backward_G(self):
         fake_AB = torch.cat((self.real_from, self.fake_to), 1)
         pred_fake = self.netD(fake_AB)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
+
+        self.loss_G_L1 = self.criterionL1(self.fake_to, self.real_to) * 100
+        self.loss_G = self.loss_G_GAN + self.loss_G_L1
+        self.loss_G.backward()
