@@ -1,4 +1,4 @@
-from typing import OrderedDict
+from collections import OrderedDict
 import torch
 from . import networks
 from .networks.GANLoss import GANLoss
