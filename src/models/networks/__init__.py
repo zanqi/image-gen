@@ -1,24 +1,25 @@
 from .UnetGenerator import UnetGenerator
 from .NLayerDiscriminator import NLayerDiscriminator
 import functools
+import torch
 import torch.nn as nn
 from torch.nn import init
 
 
-def defineG(input_nc, output_nc, ngf, norm='batch', use_dropout=False):
+def defineG(input_nc, output_nc, ngf, norm='batch', use_dropout=False, gpu_ids=[]):
     net = None
     norm_layer = get_norm_layer(norm_type=norm)
     net = UnetGenerator(input_nc, output_nc, 7, ngf,
                         norm_layer=norm_layer, use_dropout=use_dropout)
-    return init_net(net, 'normal', 0.02)
+    return init_net(net, 'normal', 0.02, gpu_ids)
 
 
-def defineD(input_nc, ndf, netD, n_layers=3, norm='batch'):
+def defineD(input_nc, ndf, netD, n_layers=3, norm='batch', gpu_ids=[]):
     net = None
     norm_layer = get_norm_layer(norm)
     net = NLayerDiscriminator(
         input_nc, ndf, n_layers=n_layers, norm_layer=norm_layer)
-    return init_net(net, 'normal', 0.02)
+    return init_net(net, 'normal', 0.02, gpu_ids)
 
 
 def get_norm_layer(norm_type):
@@ -30,10 +31,15 @@ def get_norm_layer(norm_type):
     return norm_layer
 
 
-def init_net(net, init_type='normal', init_gain=0.02):
+def init_net(net, init_type='normal', init_gain=0.02, gpu_ids=[]):
     """
     docstring
     """
+    if len(gpu_ids) > 0:
+        assert(torch.cuda.is_available())
+        net.to(gpu_ids[0])
+        net = torch.nn.DataParallel(net, gpu_ids)  # multi-GPUs
+
     def init_func(m):
         classname = m.__class__.__name__
         if hasattr(m, 'weight') \

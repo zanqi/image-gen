@@ -14,15 +14,20 @@ class Pix2PixModel(object):
         object.__init__(self)
         self.isTrain = opt.isTrain
         self.direction = opt.direction
-        self.netG = networks.defineG(opt.input_nc, opt.output_nc, opt.ngf)
         self.gpu_ids = opt.gpu_ids
-        self.device = torch.device('cuda:{}'.format(
-            self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')
+        self.device = torch.device(
+            'cuda' if torch.cuda.is_available() and len(self.gpu_ids) > 0
+            else 'cpu')
+        print(f"Device using: {self.device}")
         self.visual_names = ['real_from', 'fake_to', 'real_to']
+
+        self.netG = networks.defineG(
+            opt.input_nc, opt.output_nc, opt.ngf, self.gpu_ids)
 
         if self.isTrain:
             self.netD = networks.defineD(
-                opt.input_nc + opt.output_nc, opt.ndf, 'basic')
+                opt.input_nc + opt.output_nc, opt.ndf, 'basic',
+                gpu_ids=self.gpu_ids)
 
             self.criterionGAN = GANLoss(opt.gan_mode)
             self.criterionL1 = torch.nn.L1Loss()
