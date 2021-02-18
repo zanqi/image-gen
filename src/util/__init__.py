@@ -4,7 +4,7 @@ import numpy as np
 
 
 def tensor2im(image):
-    image_numpy = image[0].detach().float().numpy()
+    image_numpy = image[0].data.cpu().float().numpy()
     image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0
     return image_numpy.astype(np.uint8)
 
