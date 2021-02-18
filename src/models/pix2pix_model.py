@@ -29,7 +29,7 @@ class Pix2PixModel(object):
                 opt.input_nc + opt.output_nc, opt.ndf, 'basic',
                 gpu_ids=self.gpu_ids)
 
-            self.criterionGAN = GANLoss(opt.gan_mode)
+            self.criterionGAN = GANLoss(opt.gan_mode).to(self.device)
             self.criterionL1 = torch.nn.L1Loss()
             self.optimizer_G = torch.optim.Adam(
                 self.netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
