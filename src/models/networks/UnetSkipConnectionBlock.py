@@ -3,8 +3,9 @@ import torch
 
 
 class UnetSkipConnectionBlock(nn.Module):
-    """
-    docstring
+    """Defines the Unet submodule with skip connection.
+        X -------------------identity----------------------
+        |-- downsampling -- |submodule| -- upsampling --|
     """
 
     def __init__(self,
