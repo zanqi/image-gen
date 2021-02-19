@@ -6,7 +6,8 @@ import torch.nn as nn
 from torch.nn import init
 
 
-def defineG(input_nc, output_nc, ngf, norm='batch', use_dropout=False, gpu_ids=[]):
+def defineG(input_nc, output_nc, ngf, norm='batch',
+            use_dropout=False, gpu_ids=[]):
     net = None
     norm_layer = get_norm_layer(norm_type=norm)
     net = UnetGenerator(input_nc, output_nc, 7, ngf,
