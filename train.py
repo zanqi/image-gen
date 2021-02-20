@@ -16,6 +16,7 @@ class Opt(object):
         self.direction = 'AtoB'
         self.gpu_ids = []
         self.checkpoints_dir = './checkpoints'
+        self.model = "cycle_gan" # 'pix2pix'
 
 
 if __name__ == '__main__':
