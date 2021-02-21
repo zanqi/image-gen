@@ -4,13 +4,16 @@ from src.util.visualizer import Visualizer
 
 
 class Opt(object):
+    """
+    Command line options
+    """
     def __init__(self, isTrain, gan_mode):
-        self.isTrain = isTrain
+        self.is_train = isTrain
         self.gan_mode = gan_mode
         self.input_nc = 3
         self.output_nc = 3
         self.ngf = 64
-        self.lr = 0.0002
+        self.learning_rate = 0.0002
         self.beta1 = 0.5
         self.ndf = 64
         self.direction = 'AtoB'

@@ -12,7 +12,7 @@ class Pix2PixModel(object):
 
     def __init__(self, opt):
         object.__init__(self)
-        self.is_train = opt.isTrain
+        self.is_train = opt.is_train
         self.direction = opt.direction
         self.gpu_ids = opt.gpu_ids
         self.device = torch.device(
@@ -41,14 +41,14 @@ class Pix2PixModel(object):
             self.criterion_gan = GANLoss(opt.gan_mode).to(self.device)
             self.criterion_l1 = torch.nn.L1Loss()
             self.optimizer_g = torch.optim.Adam(
-                self.net_g.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+                self.net_g.parameters(), lr=opt.learning_rate, betas=(opt.beta1, 0.999))
             self.optimizer_d = torch.optim.Adam(
-                self.net_d.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+                self.net_d.parameters(), lr=opt.learning_rate, betas=(opt.beta1, 0.999))
 
-    def set_input(self, x_input):
+    def set_input(self, ab_images):
         a_to_b = self.direction == 'AtoB'
-        self.real_from = x_input['A' if a_to_b else 'B'].to(self.device)
-        self.real_to = x_input['B' if a_to_b else 'A'].to(self.device)
+        self.real_from = ab_images['A' if a_to_b else 'B'].to(self.device)
+        self.real_to = ab_images['B' if a_to_b else 'A'].to(self.device)
 
     def optimize_parameters(self):
         self.forward()

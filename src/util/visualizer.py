@@ -1,10 +1,10 @@
-import src.util as util
 import os
+import src.util as util
 
 
 class Visualizer():
     def __init__(self, opt) -> None:
-        self.web_dir = os.path.join(opt.checkpoints_dir, 'pix2pix', 'web')
+        self.web_dir = os.path.join(opt.checkpoints_dir, opt.model, 'web')
         self.img_dir = os.path.join(self.web_dir, 'images')
         print('create web directory %s...' % self.web_dir)
         util.mkdirs([self.web_dir, self.img_dir])
