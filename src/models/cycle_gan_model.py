@@ -8,4 +8,3 @@ class CycleGANModel():
             self.model_names = ['G_A', 'G_B', 'D_A', 'D_B']
         else:
             self.model_names = ['G_A', 'G_B']
-
