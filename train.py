@@ -32,4 +32,4 @@ if __name__ == '__main__':
             net.set_input(data)
             net.optimize_parameters()
             print(f"epoch {epoch}, batch {i}")
-            viz.display_current_results(net.get_current_visuals(), epoch, True)
+            viz.display_current_results(net.get_current_visuals(), epoch)

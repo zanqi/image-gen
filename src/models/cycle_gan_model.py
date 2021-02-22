@@ -1,5 +1,5 @@
-import torch
 from collections import OrderedDict
+import torch
 from . import networks
 
 
@@ -28,6 +28,9 @@ class CycleGANModel():
             else 'cpu')
 
         self.net_g = networks.defineG(opt.input_nc, opt.output_nc, opt.ngf,
+                                      self.gpu_ids)
+
+        self.net_g_reverse = networks.defineG(opt.output_nc, opt.input_nc, opt.ngf,
                                       self.gpu_ids)
         self.visual_names = []
 
