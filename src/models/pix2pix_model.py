@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import torch
-from . import networks
+from . import networks, set_requires_grad
 from .networks.GANLoss import GANLoss
 
 
@@ -52,23 +52,19 @@ class Pix2PixModel(object):
 
     def optimize_parameters(self):
         self.forward()
-        self.set_requires_grad(self.net_d, True)  # enable backprop for D
+        set_requires_grad(self.net_d, True)  # enable backprop for D
         self.optimizer_d.zero_grad()
         self.backward_d()
         self.optimizer_d.step()
 
         # D requires no gradients when optimizing G
-        self.set_requires_grad(self.net_d, False)
+        set_requires_grad(self.net_d, False)
         self.optimizer_g.zero_grad()        # set G's gradients to zero
         self.backward_g()                   # calculate gradients for G
         self.optimizer_g.step()             # udpate G's weights
 
     def forward(self):
         self.fake_to = self.net_g(self.real_from)  # G(A)
-
-    def set_requires_grad(self, net, require_grad):
-        for param in net.parameters():
-            param.requires_grad = require_grad
 
     def backward_d(self):
         fake_ab = torch.cat((self.real_from, self.fake_to), 1)

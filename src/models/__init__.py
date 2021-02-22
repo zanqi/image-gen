@@ -2,7 +2,6 @@
 NN models
 """
 import importlib
-from .pix2pix_model import Pix2PixModel
 
 
 def create_model(opt):
@@ -12,6 +11,7 @@ def create_model(opt):
     model = find_model(opt.model)
     instance = model(opt)
     return instance
+
 
 def find_model(name):
     """
@@ -26,3 +26,8 @@ def find_model(name):
             model = cls
     assert model is not None, f"{target_model_name} is not found in source"
     return model
+
+
+def set_requires_grad(net, require_grad):
+    for param in net.parameters():
+        param.requires_grad = require_grad

@@ -1,6 +1,9 @@
 from collections import OrderedDict
+import itertools
 import torch
-from . import networks
+
+from .networks.GANLoss import GANLoss
+from . import networks, set_requires_grad
 
 
 class CycleGANModel():
@@ -31,7 +34,22 @@ class CycleGANModel():
                                       self.gpu_ids)
 
         self.net_g_reverse = networks.defineG(opt.output_nc, opt.input_nc, opt.ngf,
-                                      self.gpu_ids)
+                                              self.gpu_ids)
+        if self.is_train:
+            self.net_d = networks.defineD(
+                opt.output_nc, opt.ndf, 'basic',
+                gpu_ids=self.gpu_ids)
+
+            self.net_d_reverse = networks.defineD(
+                opt.input_nc, opt.ndf, 'basic',
+                gpu_ids=self.gpu_ids)
+
+            self.criterion_gan = GANLoss().to(self.device)
+
+            self.optimizer_g = torch.optim.Adam(
+                itertools.chain(self.net_g.parameters(),
+                                self.net_g_reverse.parameters()),
+                lr=opt.learning_rate, betas=(opt.beta1, 0.999))
         self.visual_names = []
 
     def set_input(self, ab_images):
@@ -41,6 +59,17 @@ class CycleGANModel():
 
     def optimize_parameters(self):
         self.forward()      # compute fake images and reconstruction images
+
+        # Optimize G
+        # Ds require no gradients when optimizing Gs
+        set_requires_grad(self.net_d, False)
+        set_requires_grad(self.net_d_reverse, False)
+        self.optimizer_g.zero_grad()
+        self.backward_g()             # calculate gradients for G_A and G_B
+        self.optimizer_g.step()       # update G_A and G_B's weights
+
+    def backward_g(self):
+        self.loss_g = self.criterion_gan(self.net_d(self.fake_b), True)
 
     def forward(self):
         self.fake_to = self.net_g(self.real_from)

@@ -1,5 +1,5 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
 
 
 class GANLoss(nn.Module):
@@ -7,7 +7,7 @@ class GANLoss(nn.Module):
     Loss function for GAN, log(D(y)) and log(1- D(G(x))) in one class
     """
 
-    def __init__(self, gan_mode):
+    def __init__(self):
         super(GANLoss, self).__init__()
         self.loss = nn.BCEWithLogitsLoss()
         self.register_buffer('real_label', torch.tensor(1.0))
