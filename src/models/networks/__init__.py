@@ -7,7 +7,7 @@ from torch.nn import init
 
 
 def defineG(input_nc, output_nc, ngf, norm='batch',
-            use_dropout=False, gpu_ids=[]):
+            use_dropout=False, gpu_ids=None):
     net = None
     norm_layer = get_norm_layer(norm_type=norm)
     net = UnetGenerator(input_nc, output_nc, 7, ngf,
@@ -15,7 +15,7 @@ def defineG(input_nc, output_nc, ngf, norm='batch',
     return init_net(net, 'normal', 0.02, gpu_ids)
 
 
-def defineD(input_nc, ndf, netD, n_layers=3, norm='batch', gpu_ids=[]):
+def defineD(input_nc, ndf, netD, n_layers=3, norm='batch', gpu_ids=None):
     net = None
     norm_layer = get_norm_layer(norm)
     net = NLayerDiscriminator(
@@ -32,10 +32,7 @@ def get_norm_layer(norm_type):
     return norm_layer
 
 
-def init_net(net, init_type='normal', init_gain=0.02, gpu_ids=[]):
-    """
-    docstring
-    """
+def init_net(net, init_type='normal', init_gain=0.02, gpu_ids=None):
     if len(gpu_ids) > 0:
         assert torch.cuda.is_available()
         net.to(gpu_ids[0])
