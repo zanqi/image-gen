@@ -1,11 +1,15 @@
-from src.data.image_folder import make_dataset
 import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
+from src.data.image_folder import make_dataset
 
 
 class AlignedDataset(data.Dataset):
-    def __init__(self):
+    """
+    Dataset that returns a pair of tuple AB.
+    """
+
+    def __init__(self, opt):
         dir = './datasets/facades/train'
         self.AB_paths = sorted(make_dataset(dir))
 

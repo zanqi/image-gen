@@ -20,13 +20,16 @@ class Opt(object):
         self.gpu_ids = []
         self.checkpoints_dir = './checkpoints'
         self.model = "cycle_gan" # 'pix2pix'
+        self.lambda_cycle = 10
+        self.dataset_mode = 'unaligned'
+        self.phase = 'train'
 
 
 if __name__ == '__main__':
     opt = Opt(True, 'basic')
     net = create_model(opt)
     viz = Visualizer(opt)
-    dataloader = create_dataloader()
+    dataloader = create_dataloader(opt)
     for epoch in range(1, 101):
         for i, data in enumerate(dataloader):
             net.set_input(data)

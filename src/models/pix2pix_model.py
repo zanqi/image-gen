@@ -1,7 +1,7 @@
 from collections import OrderedDict
 import torch
 from . import networks, set_requires_grad
-from .networks.GANLoss import GANLoss
+from .networks.gan_loss import GANLoss
 
 
 class Pix2PixModel(object):
@@ -38,7 +38,7 @@ class Pix2PixModel(object):
                 opt.input_nc + opt.output_nc, opt.ndf, 'basic',
                 gpu_ids=self.gpu_ids)
 
-            self.criterion_gan = GANLoss(opt.gan_mode).to(self.device)
+            self.criterion_gan = GANLoss().to(self.device)
             self.criterion_l1 = torch.nn.L1Loss()
             self.optimizer_g = torch.optim.Adam(
                 self.net_g.parameters(), lr=opt.learning_rate, betas=(opt.beta1, 0.999))

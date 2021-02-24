@@ -2,7 +2,7 @@ from collections import OrderedDict
 import itertools
 import torch
 
-from .networks.GANLoss import GANLoss
+from .networks.gan_loss import GANLoss
 from . import networks, set_requires_grad
 
 
@@ -13,6 +13,7 @@ class CycleGANModel():
     """
 
     def __init__(self, opt) -> None:
+        self.opt = opt
         self.is_train = opt.is_train
         if self.is_train:
             self.model_names = ['G_A', 'G_B', 'D_A', 'D_B']
@@ -24,6 +25,10 @@ class CycleGANModel():
         self.real_to = None
         self.fake_from = None
         self.rec_to = None
+        self.loss_g = None
+        self.loss_g_reverse = None
+        self.loss_cycle = None
+        self.loss_cycle_reverse = None
         self.direction = opt.direction
         self.gpu_ids = opt.gpu_ids
         self.device = torch.device(
@@ -45,6 +50,7 @@ class CycleGANModel():
                 gpu_ids=self.gpu_ids)
 
             self.criterion_gan = GANLoss().to(self.device)
+            self.criterion_cycle = torch.nn.L1Loss()
 
             self.optimizer_g = torch.optim.Adam(
                 itertools.chain(self.net_g.parameters(),
@@ -69,7 +75,14 @@ class CycleGANModel():
         self.optimizer_g.step()       # update G_A and G_B's weights
 
     def backward_g(self):
-        self.loss_g = self.criterion_gan(self.net_d(self.fake_b), True)
+        self.loss_g = self.criterion_gan(self.net_d(self.fake_to), True)
+        self.loss_g_reverse = self.criterion_gan(
+            self.net_d_reverse(self.fake_from), True)
+
+        self.loss_cycle = self.criterion_cycle(
+            self.rec_from, self.real_from) * self.opt.lambda_cycle
+        self.loss_cycle_reverse = self.criterion_cycle(
+            self.rec_to, self.real_to) * self.opt.lambda_cycle
 
     def forward(self):
         self.fake_to = self.net_g(self.real_from)

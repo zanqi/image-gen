@@ -13,7 +13,7 @@ class GANLoss(nn.Module):
         self.register_buffer('real_label', torch.tensor(1.0))
         self.register_buffer('fake_label', torch.tensor(0.0))
 
-    def __call__(self, prediction, target_is_real):
+    def forward(self, prediction, target_is_real):
         target_tensor = self.get_target_tensor(prediction, target_is_real)
         return self.loss(prediction, target_tensor)
 
