@@ -10,8 +10,8 @@ class AlignedDataset(data.Dataset):
     """
 
     def __init__(self, opt):
-        dir = './datasets/facades/train'
-        self.AB_paths = sorted(make_dataset(dir))
+        parent_dir = './datasets/facades/train'
+        self.AB_paths = sorted(make_dataset(parent_dir))
 
     def __len__(self):
         return len(self.AB_paths)

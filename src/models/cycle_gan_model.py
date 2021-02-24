@@ -56,7 +56,9 @@ class CycleGANModel():
                 itertools.chain(self.net_g.parameters(),
                                 self.net_g_reverse.parameters()),
                 lr=opt.learning_rate, betas=(opt.beta1, 0.999))
-        self.visual_names = []
+        self.visual_names = \
+            ['real_from', 'fake_to', 'rec_from'] + \
+            ['real_to', 'fake_from', 'rec_to']
 
     def set_input(self, ab_images):
         a_to_b = self.direction == 'AtoB'
