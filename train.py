@@ -18,7 +18,7 @@ class Opt(object):
         self.ndf = 64
         self.direction = 'AtoB'
         self.gpu_ids = []
-        self.checkpoints_dir = './checkpoints'
+        self.checkpoints_dir = './my_checkpoints'
         self.model = "cycle_gan" # 'pix2pix'
         self.lambda_cycle = 10
         self.dataset_mode = 'unaligned'

@@ -131,5 +131,6 @@ dmypy.json
 # My stuff
 datasets/
 checkpoints/
+my_checkpoints/
 .DS_Store
 .vscode/settings.json
