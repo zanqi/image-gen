@@ -29,6 +29,8 @@ class CycleGANModel():
         self.loss_g_reverse = None
         self.loss_cycle = None
         self.loss_cycle_reverse = None
+        self.loss_d = None
+        self.loss_d_reverse = None
         self.direction = opt.direction
         self.gpu_ids = opt.gpu_ids
         self.device = torch.device(
@@ -86,6 +88,27 @@ class CycleGANModel():
         set_requires_grad(self.net_d, True)
         set_requires_grad(self.net_d_reverse, True)
         self.optimizer_d.zero_grad()
+        self.backward_d()
+        self.optimizer_d.step()
+
+    def backward_d(self):
+        self.loss_d = self.backward_d_base(
+            self.net_d, self.real_to, self.fake_to)
+        self.loss_d.backward()
+
+        self.loss_d_reverse = self.backward_d_base(
+            self.net_d_reverse, self.real_from, self.fake_from)
+        self.loss_d_reverse.backward()
+
+    def backward_d_base(self, net_d, real, fake):
+        pred_real = net_d(real)
+        loss_d_real = self.criterion_gan(pred_real, True)
+
+        pred_fake = net_d(fake.detach())
+        loss_d_fake = self.criterion_gan(pred_fake, False)
+
+        loss_d = (loss_d_real + loss_d_fake) * 0.5
+        return loss_d
 
     def backward_g(self):
         self.loss_g = self.criterion_gan(self.net_d(self.fake_to), True)
