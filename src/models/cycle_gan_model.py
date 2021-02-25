@@ -53,8 +53,14 @@ class CycleGANModel():
             self.criterion_cycle = torch.nn.L1Loss()
 
             self.optimizer_g = torch.optim.Adam(
-                itertools.chain(self.net_g.parameters(),
-                                self.net_g_reverse.parameters()),
+                itertools.chain(
+                    self.net_g.parameters(),
+                    self.net_g_reverse.parameters()),
+                lr=opt.learning_rate, betas=(opt.beta1, 0.999))
+            self.optimizer_d = torch.optim.Adam(
+                itertools.chain(
+                    self.net_d.parameters(),
+                    self.net_d_reverse.parameters()),
                 lr=opt.learning_rate, betas=(opt.beta1, 0.999))
         self.visual_names = \
             ['real_from', 'fake_to', 'rec_from'] + \
@@ -76,6 +82,11 @@ class CycleGANModel():
         self.backward_g()             # calculate gradients for G_A and G_B
         self.optimizer_g.step()       # update G_A and G_B's weights
 
+        # Optimize D
+        set_requires_grad(self.net_d, True)
+        set_requires_grad(self.net_d_reverse, True)
+        self.optimizer_d.zero_grad()
+
     def backward_g(self):
         self.loss_g = self.criterion_gan(self.net_d(self.fake_to), True)
         self.loss_g_reverse = self.criterion_gan(
@@ -85,6 +96,9 @@ class CycleGANModel():
             self.rec_from, self.real_from) * self.opt.lambda_cycle
         self.loss_cycle_reverse = self.criterion_cycle(
             self.rec_to, self.real_to) * self.opt.lambda_cycle
+        self.loss_g = self.loss_g + self.loss_g_reverse + \
+            self.loss_cycle + self.loss_cycle_reverse
+        self.loss_g.backward()
 
     def forward(self):
         self.fake_to = self.net_g(self.real_from)
