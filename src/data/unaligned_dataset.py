@@ -18,6 +18,8 @@ class UnalignedDataset(data.Dataset):
         self.b_paths = sorted(make_dataset(self.dir_b))
         self.a_size = len(self.a_paths)
         self.b_size = len(self.b_paths)
+        assert self.a_size != 0, 'Input folder A is empty'
+        assert self.b_size != 0, 'Input folder B is empty'
 
         self.transform = get_transform()
 
