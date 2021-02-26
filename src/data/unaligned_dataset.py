@@ -11,8 +11,8 @@ class UnalignedDataset(data.Dataset):
     """
 
     def __init__(self, opt):
-        self.dir_a = os.path.join('./datasets/horse2zebra', opt.phase + 'A')
-        self.dir_b = os.path.join('./datasets/horse2zebra', opt.phase + 'B')
+        self.dir_a = os.path.join(opt.dataroot, opt.phase + 'A')
+        self.dir_b = os.path.join(opt.dataroot, opt.phase + 'B')
 
         self.a_paths = sorted(make_dataset(self.dir_a))
         self.b_paths = sorted(make_dataset(self.dir_b))

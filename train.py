@@ -22,6 +22,7 @@ class Opt(object):
         self.model = "cycle_gan" # 'pix2pix'
         self.lambda_cycle = 10
         self.dataset_mode = 'unaligned'
+        self.dataroot = './datasets/horse2zebra'
         self.phase = 'train'
 
 
