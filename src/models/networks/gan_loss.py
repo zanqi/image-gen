@@ -7,9 +7,12 @@ class GANLoss(nn.Module):
     Loss function for GAN, log(D(y)) and log(1- D(G(x))) in one class
     """
 
-    def __init__(self):
-        super(GANLoss, self).__init__()
-        self.loss = nn.BCEWithLogitsLoss()
+    def __init__(self, gan_loss_mode):
+        super().__init__()
+        if gan_loss_mode == 'lsgan':
+            self.loss = nn.MSELoss()
+        else:
+            self.loss = nn.BCEWithLogitsLoss()
         self.register_buffer('real_label', torch.tensor(1.0))
         self.register_buffer('fake_label', torch.tensor(0.0))
 

@@ -7,9 +7,8 @@ class Opt(object):
     """
     Command line options
     """
-    def __init__(self, isTrain, gan_mode):
+    def __init__(self, isTrain):
         self.is_train = isTrain
-        self.gan_mode = gan_mode
         self.input_nc = 3
         self.output_nc = 3
         self.ngf = 64
@@ -24,10 +23,11 @@ class Opt(object):
         self.dataset_mode = 'unaligned'
         self.dataroot = './datasets/horse2zebra'
         self.phase = 'train'
+        self.gan_loss_mode = 'lsgan'
 
 
 if __name__ == '__main__':
-    opt = Opt(True, 'basic')
+    opt = Opt(True)
     net = create_model(opt)
     viz = Visualizer(opt)
     dataloader = create_dataloader(opt)

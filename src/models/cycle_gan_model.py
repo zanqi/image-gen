@@ -51,7 +51,7 @@ class CycleGANModel():
                 opt.input_nc, opt.ndf, 'basic',
                 gpu_ids=self.gpu_ids)
 
-            self.criterion_gan = GANLoss().to(self.device)
+            self.criterion_gan = GANLoss(opt.gan_loss_mode).to(self.device)
             self.criterion_cycle = torch.nn.L1Loss()
 
             self.optimizer_g = torch.optim.Adam(
