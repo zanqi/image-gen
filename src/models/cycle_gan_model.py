@@ -2,6 +2,8 @@ from collections import OrderedDict
 import itertools
 import torch
 
+from src.util.image_pool import ImagePool
+
 from .networks.gan_loss import GANLoss
 from . import networks, set_requires_grad
 
@@ -64,6 +66,8 @@ class CycleGANModel():
                     self.net_d.parameters(),
                     self.net_d_reverse.parameters()),
                 lr=opt.learning_rate, betas=(opt.beta1, 0.999))
+            self.fake_from_pool = ImagePool(opt.pool_size)
+            self.fake_to_pool = ImagePool(opt.pool_size)
         self.visual_names = \
             ['real_from', 'fake_to', 'rec_from'] + \
             ['real_to', 'fake_from', 'rec_to']
@@ -92,12 +96,14 @@ class CycleGANModel():
         self.optimizer_d.step()
 
     def backward_d(self):
+        fake_to = self.fake_to_pool.query(self.fake_to)
         self.loss_d = self.backward_d_base(
-            self.net_d, self.real_to, self.fake_to)
+            self.net_d, self.real_to, fake_to)
         self.loss_d.backward()
 
+        fake_from = self.fake_to_pool.query(self.fake_from)
         self.loss_d_reverse = self.backward_d_base(
-            self.net_d_reverse, self.real_from, self.fake_from)
+            self.net_d_reverse, self.real_from, fake_from)
         self.loss_d_reverse.backward()
 
     def backward_d_base(self, net_d, real, fake):

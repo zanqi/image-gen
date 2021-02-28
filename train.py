@@ -24,7 +24,7 @@ class Opt(object):
         self.dataroot = './datasets/horse2zebra'
         self.phase = 'train'
         self.gan_loss_mode = 'lsgan'
-
+        self.pool_size = 50
 
 if __name__ == '__main__':
     opt = Opt(True)
