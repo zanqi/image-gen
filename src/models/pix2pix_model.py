@@ -21,7 +21,7 @@ class Pix2PixModel(object):
         print(f"Device using: {self.device}")
         self.visual_names = ['real_from', 'fake_to', 'real_to']
 
-        self.net_g = networks.defineG(
+        self.net_g = networks.define_g(
             opt.input_nc, opt.output_nc, opt.ngf, gpu_ids=self.gpu_ids)
         self.real_from = None
         self.real_to = None
@@ -34,11 +34,11 @@ class Pix2PixModel(object):
         self.loss_g = None
 
         if self.is_train:
-            self.net_d = networks.defineD(
-                opt.input_nc + opt.output_nc, opt.ndf, 'basic',
+            self.net_d = networks.define_d(
+                opt.input_nc + opt.output_nc, opt.ndf,
                 gpu_ids=self.gpu_ids)
 
-            self.criterion_gan = GANLoss().to(self.device)
+            self.criterion_gan = GANLoss('vanila').to(self.device)
             self.criterion_l1 = torch.nn.L1Loss()
             self.optimizer_g = torch.optim.Adam(
                 self.net_g.parameters(), lr=opt.learning_rate, betas=(opt.beta1, 0.999))
