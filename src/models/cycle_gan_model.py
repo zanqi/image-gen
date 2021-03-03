@@ -99,12 +99,10 @@ class CycleGANModel():
         fake_to = self.fake_to_pool.query(self.fake_to)
         self.loss_d = self.backward_d_base(
             self.net_d, self.real_to, fake_to)
-        self.loss_d.backward()
 
-        fake_from = self.fake_to_pool.query(self.fake_from)
+        fake_from = self.fake_from_pool.query(self.fake_from)
         self.loss_d_reverse = self.backward_d_base(
             self.net_d_reverse, self.real_from, fake_from)
-        self.loss_d_reverse.backward()
 
     def backward_d_base(self, net_d, real, fake):
         pred_real = net_d(real)
@@ -114,10 +112,11 @@ class CycleGANModel():
         loss_d_fake = self.criterion_gan(pred_fake, False)
 
         loss_d = (loss_d_real + loss_d_fake) * 0.5
+        loss_d.backward()
         return loss_d
 
     def backward_g(self):
-        self.loss_g = self.criterion_gan(self.net_d(self.fake_to), True)
+        loss_g_forward = self.criterion_gan(self.net_d(self.fake_to), True)
         self.loss_g_reverse = self.criterion_gan(
             self.net_d_reverse(self.fake_from), True)
 
@@ -125,7 +124,7 @@ class CycleGANModel():
             self.rec_from, self.real_from) * self.opt.lambda_cycle
         self.loss_cycle_reverse = self.criterion_cycle(
             self.rec_to, self.real_to) * self.opt.lambda_cycle
-        self.loss_g = self.loss_g + self.loss_g_reverse + \
+        self.loss_g = loss_g_forward + self.loss_g_reverse + \
             self.loss_cycle + self.loss_cycle_reverse
         self.loss_g.backward()
 
