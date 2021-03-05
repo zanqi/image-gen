@@ -28,7 +28,7 @@ class ResnetGenerator(nn.Module):
                 nn.ReLU(True)]
         mult = 2 ** n_downsampling
 
-        for i in range(9):       # add ResNet blocks
+        for i in range(6):       # add ResNet blocks
             model += [ResnetBlock(ngf * mult,
                                   norm=norm_layer)]
 
