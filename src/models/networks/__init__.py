@@ -3,15 +3,19 @@ import torch
 import torch.nn as nn
 from torch.nn import init
 from .UnetGenerator import UnetGenerator
+from .resnet_generator import ResnetGenerator
 from .n_layer_discriminator import NLayerDiscriminator
 
 
-def define_g(input_nc, output_nc, ngf,
-            use_dropout=False, gpu_ids=None):
+def define_g(input_nc, output_nc, ngf, net_g,
+             use_dropout=False, gpu_ids=None):
     net = None
     norm_layer = get_norm_layer()
-    net = UnetGenerator(input_nc, output_nc, 7, ngf,
-                        norm_layer=norm_layer, use_dropout=use_dropout)
+    if net_g == 'unet':
+        net = UnetGenerator(input_nc, output_nc, 7, ngf,
+                            norm_layer=norm_layer, use_dropout=use_dropout)
+    else:
+        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer)
     return init_net(net, 0.02, gpu_ids)
 
 

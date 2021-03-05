@@ -22,7 +22,7 @@ class Pix2PixModel(object):
         self.visual_names = ['real_from', 'fake_to', 'real_to']
 
         self.net_g = networks.define_g(
-            opt.input_nc, opt.output_nc, opt.ngf, gpu_ids=self.gpu_ids)
+            opt.input_nc, opt.output_nc, opt.ngf, 'unet', gpu_ids=self.gpu_ids)
         self.real_from = None
         self.real_to = None
         self.fake_to = None

@@ -39,11 +39,11 @@ class CycleGANModel():
             'cuda' if torch.cuda.is_available() and len(self.gpu_ids) > 0
             else 'cpu')
         print(f"Device using: {self.device}")
-        self.net_g = networks.define_g(opt.input_nc, opt.output_nc, opt.ngf,
-                                      gpu_ids=self.gpu_ids)
+        self.net_g = networks.define_g(opt.input_nc, opt.output_nc, opt.ngf, 'resnet',
+                                       gpu_ids=self.gpu_ids)
 
-        self.net_g_reverse = networks.define_g(opt.output_nc, opt.input_nc, opt.ngf,
-                                              gpu_ids=self.gpu_ids)
+        self.net_g_reverse = networks.define_g(opt.output_nc, opt.input_nc, opt.ngf, 'resnet',
+                                               gpu_ids=self.gpu_ids)
         if self.is_train:
             self.net_d = networks.define_d(
                 opt.output_nc, opt.ndf,
