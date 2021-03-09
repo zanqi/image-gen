@@ -7,6 +7,7 @@ class Opt(object):
     """
     Command line options
     """
+
     def __init__(self, isTrain):
         self.is_train = isTrain
         self.input_nc = 3
@@ -18,13 +19,14 @@ class Opt(object):
         self.direction = 'AtoB'
         self.gpu_ids = []
         self.checkpoints_dir = './my_checkpoints'
-        self.model = "cycle_gan" # 'pix2pix'
+        self.model = "cycle_gan"  # 'pix2pix'
         self.lambda_cycle = 10
         self.dataset_mode = 'unaligned'
         self.dataroot = './datasets/horse2zebra'
         self.phase = 'train'
         self.gan_loss_mode = 'lsgan'
         self.pool_size = 50
+
 
 if __name__ == '__main__':
     opt = Opt(True)
@@ -35,5 +37,8 @@ if __name__ == '__main__':
         for i, data in enumerate(dataloader):
             net.set_input(data)
             net.optimize_parameters()
-            print(f"epoch {epoch}, batch {i}")
-        viz.display_current_results(net.get_current_visuals(), epoch)
+            if i % 20 == 0:
+                print(f"epoch {epoch}, batch {i}")
+
+        if epoch % 5 == 0:
+            viz.display_current_results(net.get_current_visuals(), epoch)
