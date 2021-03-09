@@ -20,7 +20,7 @@ def create_dataloader(opt):
         data_set,
         batch_size=10,
         shuffle=True,
-        num_workers=4)
+        num_workers=2)
     return data_loader
 
 
