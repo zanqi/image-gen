@@ -8,7 +8,7 @@ class ResnetGenerator(nn.Module):
     Resnet-based generator
     """
 
-    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d):
+    def __init__(self, input_nc, output_nc, ngf=64, num_resblock=3, norm_layer=nn.BatchNorm2d):
         super().__init__()
 
         model = [
@@ -28,7 +28,7 @@ class ResnetGenerator(nn.Module):
                 nn.ReLU(True)]
         mult = 2 ** n_downsampling
 
-        for i in range(6):       # add ResNet blocks
+        for i in range(num_resblock):       # add ResNet blocks
             model += [ResnetBlock(ngf * mult,
                                   norm=norm_layer)]
 
