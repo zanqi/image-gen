@@ -55,6 +55,7 @@ class CycleGANModel():
 
             self.criterion_gan = GANLoss(opt.gan_loss_mode).to(self.device)
             self.criterion_cycle = torch.nn.L1Loss()
+            self.criterion_idt = torch.nn.L1Loss()
 
             self.optimizer_g = torch.optim.Adam(
                 itertools.chain(
@@ -116,16 +117,26 @@ class CycleGANModel():
         return loss_d
 
     def backward_g(self):
+        lambda_idt = self.opt.lambda_identity
+        lambda_cycle = self.opt.lambda_cycle
+        if lambda_idt > 0:
+            idt_a = self.net_g(self.real_to)
+            loss_idt_a = self.criterion_idt(idt_a, self.real_to) * lambda_cycle * lambda_idt
+            idt_b = self.net_g_reverse(self.real_from)
+            loss_idt_b = self.criterion_idt(idt_b, self.real_from) * lambda_cycle * lambda_idt
+        else:
+            loss_idt_a = 0
+            loss_idt_b = 0
         loss_g_forward = self.criterion_gan(self.net_d(self.fake_to), True)
         self.loss_g_reverse = self.criterion_gan(
             self.net_d_reverse(self.fake_from), True)
 
         self.loss_cycle = self.criterion_cycle(
-            self.rec_from, self.real_from) * self.opt.lambda_cycle
+            self.rec_from, self.real_from) * lambda_cycle
         self.loss_cycle_reverse = self.criterion_cycle(
-            self.rec_to, self.real_to) * self.opt.lambda_cycle
+            self.rec_to, self.real_to) * lambda_cycle
         self.loss_g = loss_g_forward + self.loss_g_reverse + \
-            self.loss_cycle + self.loss_cycle_reverse
+            self.loss_cycle + self.loss_cycle_reverse + loss_idt_a + loss_idt_b
         self.loss_g.backward()
 
     def forward(self):

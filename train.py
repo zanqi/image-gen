@@ -21,6 +21,7 @@ class Opt(object):
         self.checkpoints_dir = './my_checkpoints'
         self.model = "cycle_gan"  # 'pix2pix'
         self.lambda_cycle = 10
+        self.lambda_identity = 0.5
         self.dataset_mode = 'unaligned'
         self.dataroot = './datasets/horse2zebra'
         self.phase = 'train'
