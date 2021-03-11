@@ -27,6 +27,7 @@ class Opt(object):
         self.phase = 'train'
         self.gan_loss_mode = 'lsgan'
         self.pool_size = 50
+        self.batch_size = 1
 
 
 if __name__ == '__main__':

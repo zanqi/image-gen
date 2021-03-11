@@ -18,7 +18,7 @@ def create_dataloader(opt):
     data_set = data_set(opt)
     data_loader = torch.utils.data.DataLoader(
         data_set,
-        batch_size=10,
+        batch_size=opt.batch_size,
         shuffle=True,
         num_workers=2)
     return data_loader
