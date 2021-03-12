@@ -8,7 +8,7 @@ class ResnetGenerator(nn.Module):
     Resnet-based generator
     """
 
-    def __init__(self, input_nc, output_nc, ngf=64, num_resblock=3, norm_layer=nn.BatchNorm2d):
+    def __init__(self, input_nc, output_nc, ngf=64, num_resblock=6, norm_layer=nn.BatchNorm2d):
         super().__init__()
 
         model = [
