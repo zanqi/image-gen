@@ -28,6 +28,7 @@ class Opt(object):
         self.gan_loss_mode = 'lsgan'
         self.pool_size = 50
         self.batch_size = 1
+        self.num_dataloader_threads = 4
 
 
 if __name__ == '__main__':
