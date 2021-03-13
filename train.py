@@ -40,7 +40,7 @@ if __name__ == '__main__':
         for i, data in enumerate(dataloader):
             net.set_input(data)
             net.optimize_parameters()
-            if i % 20 == 0:
+            if i % 200 == 0:
                 print(f"epoch {epoch}, batch {i}")
 
         if epoch % 5 == 0:
